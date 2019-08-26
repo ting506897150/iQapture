@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zhy.autolayout.AutoLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <com.zhy.autolayout.AutoRelativeLayout
+        android:paddingLeft="24px"
+        android:paddingRight="24px"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="144px">
+        <ImageView
+            android:layout_centerVertical="true"
+            android:id="@+id/image"
+            android:src="@mipmap/file_picker_folder"
+            android:layout_width="100px"
+            android:layout_height="100px"/>
+        <TextView
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/image"
+            android:id="@+id/text_name"
+            android:layout_marginLeft="24px"
+            android:textSize="48px"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <ImageView
+            android:id="@+id/image_checked"
+            android:visibility="gone"
+            android:src="@mipmap/file_no_selection"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </com.zhy.autolayout.AutoRelativeLayout>
+</com.zhy.autolayout.AutoLinearLayout>

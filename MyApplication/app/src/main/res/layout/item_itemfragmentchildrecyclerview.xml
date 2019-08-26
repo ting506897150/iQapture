@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zhy.autolayout.AutoRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <com.zhy.autolayout.AutoLinearLayout
+        android:id="@+id/list_item"
+        android:padding="24px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_weight="2"
+            android:text="21/07/2018 14:28"
+            android:textColor="@color/left"
+            android:textSize="36px"
+            android:id="@+id/text_month"
+            android:layout_width="0px"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:layout_weight="2"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:text="Name"
+            android:textColor="@color/left"
+            android:textSize="36px"
+            android:id="@+id/text_name"
+            android:layout_width="0px"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:gravity="center"
+            android:layout_weight="1"
+            android:text="1"
+            android:textColor="@color/left"
+            android:textSize="36px"
+            android:id="@+id/text_num"
+            android:layout_width="0px"
+            android:layout_height="wrap_content"/>
+    </com.zhy.autolayout.AutoLinearLayout>
+    <View
+        android:layout_below="@+id/list_item"
+        style="@style/horizontaldivider"/>
+</com.zhy.autolayout.AutoRelativeLayout>

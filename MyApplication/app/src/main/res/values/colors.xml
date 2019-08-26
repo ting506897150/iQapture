@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="white">#FFFFFF</color>
+    <color name="left">#333333</color>
+    <color name="center">#666666</color>
+    <color name="right">#999999</color>
+    <color name="blue">#38a1eb</color>
+    <color name="divider_gray">#e8e8e8</color>
+    <color name="gray">#E2E5EC</color>
+    <color name="province_line_border">#D0D0D0</color>
+
+    <color name="color_f6">#f6f6f6</color>
+    <color name="loginbtn">#F38302</color>
+    <color name="red">#FF0000</color>
+    <color name="edit_bg">#5F8598</color>
+    <color name="section1_bg">#63BDF9</color>
+    <color name="section1_bk">#CFFEFF</color>
+    <color name="section2_text">#64BDF9</color>
+    <color name="section2_bk">#64BDF9</color>
+    <color name="section3_bg">#8C8A8D</color>
+    <color name="section4_text">#9A9A9A</color>
+    <color name="section5_text">#DFDFDF</color>
+    <color name="section5_bk">#D7D7D7</color>
+    <color name="layout_bg">#EEEEEE</color>
+</resources>

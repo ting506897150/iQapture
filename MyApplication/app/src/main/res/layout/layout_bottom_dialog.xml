@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zhy.autolayout.AutoRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20px"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_album"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_album"
+            android:gravity="center"
+            android:padding="25px"
+            android:text="Photo album/Video"
+            android:textSize="48px"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:background="#f5f5f5"/>
+
+        <TextView
+            android:id="@+id/tv_audio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:gravity="center"
+            android:padding="25px"
+            android:text="Audio"
+            android:textSize="48px"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:background="#f5f5f5"/>
+
+        <TextView
+            android:id="@+id/tv_other"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_camera"
+            android:gravity="center"
+            android:padding="25px"
+            android:text="Other Documents"
+            android:textSize="48px"/>
+
+        <TextView
+            android:id="@+id/tv_cancel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20px"
+            android:background="@drawable/shape_cancel"
+            android:gravity="center"
+            android:padding="25px"
+            android:text="Cancel"
+            android:textSize="48px"/>
+
+    </LinearLayout>
+
+</com.zhy.autolayout.AutoRelativeLayout>

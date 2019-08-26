@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zhy.autolayout.AutoRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="96px"
+    android:paddingLeft="24px"
+    android:paddingRight="24px"
+    android:background="@drawable/bg_seach2"
+    android:layout_marginTop="10px">
+    <TextView
+        android:layout_toRightOf="@+id/checkbox"
+        android:layout_centerVertical="true"
+        android:id="@+id/text_name"
+        android:textSize="48px"
+        android:textColor="@color/left"
+        android:text="Name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <CheckBox
+        android:layout_centerVertical="true"
+        android:clickable="false"
+        android:id="@+id/checkbox"
+        android:layout_alignParentLeft="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</com.zhy.autolayout.AutoRelativeLayout>

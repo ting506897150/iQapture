@@ -169,6 +169,7 @@ public abstract class BaseActivity<P extends BasePresenter> extends RxAppCompatA
     public void StorageAndJump() {
         //存储用户id，公司id
         editor = SharedPreferencesUtil.getsInstances(this);
+        editor.putString(Preferences.USERNAMES, vcAccount.getUsername());
         editor.putInt(Preferences.USERID, vcAccount.getUserID());
         editor.putInt(Preferences.COMPANYID, vcAccount.getDefaultCompany());
 

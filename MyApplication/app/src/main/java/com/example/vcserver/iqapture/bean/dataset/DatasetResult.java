@@ -39,8 +39,30 @@ public class DatasetResult{
         public String Base64Icon;
         // 父目录编号
         public int ParentFolderID;
-        //
+        //Dataset各版本id
+        public String DatasetPath;
+        //子数据
         private List<IQDataset> Childrens;
+        //是否离线过model
+        public boolean offline;
+        //是否存在未提交过的离线模式添加的问题model
+        public boolean offlinequestion;
+
+        public boolean isOffline() {
+            return offline;
+        }
+
+        public void setOffline(boolean offline) {
+            this.offline = offline;
+        }
+
+        public boolean isOfflinequestion() {
+            return offlinequestion;
+        }
+
+        public void setOfflinequestion(boolean offlinequestion) {
+            this.offlinequestion = offlinequestion;
+        }
 
         public List<IQDataset> getChildrens() {
             return Childrens;
@@ -88,6 +110,14 @@ public class DatasetResult{
 
         public void setParentFolderID(int parentFolderID) {
             ParentFolderID = parentFolderID;
+        }
+
+        public String getDatasetPath() {
+            return DatasetPath;
+        }
+
+        public void setDatasetPath(String datasetPath) {
+            DatasetPath = datasetPath;
         }
     }
 

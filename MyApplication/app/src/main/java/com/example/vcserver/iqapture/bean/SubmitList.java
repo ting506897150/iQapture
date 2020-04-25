@@ -1,5 +1,7 @@
 package com.example.vcserver.iqapture.bean;
 
+import java.util.Date;
+
 /**
  * Created by VCServer on 2019/2/26.
  */
@@ -11,6 +13,7 @@ public class SubmitList {
     public int RecordID;
     public int ParentFolderID;
     public boolean isCompleted;
+    public Date CapturedOfflineTime;
     public String questionjson;
 
     public int getDatasetID() {
@@ -43,6 +46,14 @@ public class SubmitList {
 
     public void setCompleted(boolean completed) {
         isCompleted = completed;
+    }
+
+    public Date getCapturedOfflineTime() {
+        return CapturedOfflineTime;
+    }
+
+    public void setCapturedOfflineTime(Date capturedOfflineTime) {
+        CapturedOfflineTime = capturedOfflineTime;
     }
 
     public String getQuestionjson() {

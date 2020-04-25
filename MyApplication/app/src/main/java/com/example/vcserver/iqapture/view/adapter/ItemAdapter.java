@@ -32,6 +32,16 @@ public class ItemAdapter extends CommonAdapter<DatasetResult.IQDataset> {
                 holder.setImageResource(R.id.image,R.mipmap.camera);
             }
         }
+        if (s.isOffline()){
+            holder.setVisible(R.id.text_offline,true);
+        }else{
+            holder.setVisible(R.id.text_offline,false);
+        }
+        if (s.isOfflinequestion()){
+            holder.setVisible(R.id.text_not,true);
+        }else{
+            holder.setVisible(R.id.text_not,false);
+        }
         holder.setText(R.id.txetx_name,s.getName());
     }
 }

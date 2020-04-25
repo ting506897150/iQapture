@@ -78,7 +78,7 @@ public class QuestionnaireActivity extends BaseActivity<QuestionPresenter> imple
     @Bind(R.id.img_save)
     ImageView imgSave;
 
-    private String title;
+    private String title,addoredit,CreateTime;
     private int filledId;
     private int ParentFolderID;
     public int datasetId;
@@ -140,7 +140,6 @@ public class QuestionnaireActivity extends BaseActivity<QuestionPresenter> imple
 
     private boolean isState = true;//判断是否有必填项未填
     String sql;
-    Cursor cursor;
 
     public DisplayMetrics dm;
     @Override
@@ -161,17 +160,19 @@ public class QuestionnaireActivity extends BaseActivity<QuestionPresenter> imple
         wm.getDefaultDisplay().getMetrics(dm);
 
         title = getIntent().getStringExtra("title");
+        addoredit = getIntent().getStringExtra("addoredit");
+        CreateTime = getIntent().getStringExtra("CreateTime");
         filledId = getIntent().getIntExtra("filledId", 0);
         ParentFolderID = getIntent().getIntExtra("ParentFolderID", 0);
         datasetId = getIntent().getIntExtra("datasetId", 0);
         compeleted = getIntent().getBooleanExtra("compeleted", false);
         if (compeleted == true){//完成状态
-            imgComplete.setVisibility(View.GONE);
-            imgSave.setVisibility(View.GONE);
+            imgComplete.setVisibility(View.INVISIBLE);
+            imgSave.setVisibility(View.INVISIBLE);
         }
         textTab.setText(title);
-        userid = SharedPreferencesUtil.getsInstances(this).getInt(Preferences.USERID, 0);
-        companyid = SharedPreferencesUtil.getsInstances(this).getInt(Preferences.COMPANYID, 0);
+        userid = editor.getInt(Preferences.USERID, 0);
+        companyid = editor.getInt(Preferences.COMPANYID, 0);
 
         //设置刷新时动画的颜色，可以设置4个
         if (swipeRefreshLayout != null) {
@@ -186,7 +187,6 @@ public class QuestionnaireActivity extends BaseActivity<QuestionPresenter> imple
         intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
         networkChangeReceiver = new NetworkChangeReceiverQuestion();
         registerReceiver(networkChangeReceiver, intentFilter);
-
     }
 
     class NetworkChangeReceiverQuestion extends BroadcastReceiver {
@@ -202,18 +202,17 @@ public class QuestionnaireActivity extends BaseActivity<QuestionPresenter> imple
                 initquestion(page);
                 LoadMore();
             }else{
-                if (filledId == 0){
+                if (addoredit.equals("add")){
                     db = myDatabaseHelper.getWritableDatabase();
                     //取出问题列表
                     sql = "select * from questionmodelresult where DatasetID = ? and RecordId = ?";
-                    cursor = db.rawQuery(sql,new String[]{String.valueOf(datasetId),String.valueOf(filledId)});
+                    Cursor cursor = db.rawQuery(sql,new String[]{String.valueOf(datasetId),String.valueOf(filledId)});
                     if (cursor.getCount() > 0){
                         allquestionlist.clear();
                         allquestionnaireList.clear();
                         while(cursor.moveToNext()){
                             questionlist = cursor.getString(cursor.getColumnIndex("section"));
-//                            IsLastPage = Boolean.valueOf(cursor.getString(cursor.getColumnIndex("IsLastPage")));
-                            SharedPreferencesUtil.getsInstances(QuestionnaireActivity.this).putBoolean(Preferences.ISCOMPLETED,Boolean.valueOf(cursor.getString(cursor.getColumnIndex("isCompleted"))));
+                            SharedPreferencesUtil.getsInstances(QuestionnaireActivity.this).putBoolean(Preferences.ISCOMPLETED,cursor.getString(cursor.getColumnIndex("isCompleted")).equals("1")?true:false);
                         }
                         //转化
                         Type type = new TypeToken<List<Questionnaire>>(){ }.getType();
@@ -225,7 +224,7 @@ public class QuestionnaireActivity extends BaseActivity<QuestionPresenter> imple
                     }else{
                         adapter();
                     }
-                }else{
+                }else if (addoredit.equals("edit")){
                     locaquestion();
                 }
             }
@@ -288,29 +287,33 @@ public class QuestionnaireActivity extends BaseActivity<QuestionPresenter> imple
             }, 1000);
         }else{
             recyclerViewAdapter.setData(allquestionlist);
+            closeLoadingDialog();
         }
     }
 
     private void locaquestion() {
         db = myDatabaseHelper.getWritableDatabase();
         //取出问题列表
-        sql = "select * from questionresult where DatasetID = ? and RecordId = ?";
-        cursor = db.rawQuery(sql, new String[]{String.valueOf(datasetId),String.valueOf(filledId)});
+        sql = "select * from submitquestion where DatasetID = ? and CreateTime = ?";
+        Cursor cursor = db.rawQuery(sql, new String[]{String.valueOf(datasetId),String.valueOf(Other.getTimeStamp(CreateTime,"dd/MM/yyyy HH:mm:ss"))});
         if (cursor.getCount() > 0){
             allquestionlist.clear();
             allquestionnaireList.clear();
             while(cursor.moveToNext()){
-                questionlist = cursor.getString(cursor.getColumnIndex("section"));
-//                IsLastPage = Boolean.valueOf(cursor.getString(cursor.getColumnIndex("IsLastPage")));
+                questionlist = cursor.getString(cursor.getColumnIndex("questionjson"));
                 SharedPreferencesUtil.getsInstances(this).putBoolean(Preferences.ISCOMPLETED,cursor.getString(cursor.getColumnIndex("isCompleted")).equals("1")?true:false);
             }
             //转化
-            Type type = new TypeToken<List<Questionnaire>>(){ }.getType();
-            allquestionnaireList = gson.fromJson(questionlist, type);
+            Type type = new TypeToken<List<Questionnaire.Question>>(){ }.getType();
+//            allquestionnaireList = gson.fromJson(questionlist, type);
+            allquestionlist = gson.fromJson(questionlist, type);
             cursor.close();
             db.close();
             //加载数据
-            loaddata();
+//            loaddata();
+            //获取本地存储的数据加载到适配器
+            IsLastPage = true;
+            adapter();
         }else{
             adapter();
         }
@@ -500,7 +503,7 @@ public class QuestionnaireActivity extends BaseActivity<QuestionPresenter> imple
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-//                lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();//当前item位置
+                lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();//当前item位置
                 if (newState == RecyclerView.SCROLL_STATE_IDLE && lastVisibleItem + 1 == linearLayoutManager.getItemCount() && isSlidingToLast) {// && lastVisibleItem + 1 == linearLayoutManager.getItemCount()
                     if (IsLastPage == false) {
                         page = page + 1;
@@ -888,18 +891,23 @@ public class QuestionnaireActivity extends BaseActivity<QuestionPresenter> imple
     private void submit() {
         isState = true;
         showLoadingDialog();
-        if (filledId == 0) {//新建保存
+        if (addoredit.equals("add")){
             submitQuestion();
-//            editquestion = new ArrayList<>();
-//            editquestion.addAll(recyclerViewAdapter.resultObjects());//填写修改后的数据集合
-//            showLoadingDialog();
-//            state = true;
-//            questionnaireList.clear();
-//            allquestionnaireList.clear();
-//            initquestion(1, count);//查询所有数据  暂时不可用
-        } else {//修改保存
+        }else{
             submitQuestion();
         }
+//        if (filledId == 0) {//新建保存
+//            submitQuestion();
+////            editquestion = new ArrayList<>();
+////            editquestion.addAll(recyclerViewAdapter.resultObjects());//填写修改后的数据集合
+////            showLoadingDialog();
+////            state = true;
+////            questionnaireList.clear();
+////            allquestionnaireList.clear();
+////            initquestion(1, count);//查询所有数据  暂时不可用
+//        } else {//修改保存
+//            submitQuestion();
+//        }
     }
 
     private void submitQuestion() {
@@ -1072,22 +1080,43 @@ public class QuestionnaireActivity extends BaseActivity<QuestionPresenter> imple
     }
 
     private void storagequestion() {
-        db = myDatabaseHelper.getWritableDatabase();
-//        //判断表是否为空，便于每次重新添加数据
-//        if (db.rawQuery("SELECT * FROM submitquestion",null).getCount() > 0){
-//            myDatabaseHelper.Deletesubmitquestion(db);
-//        }
-        ContentValues cv1 = new ContentValues();
-        cv1.put("questionjson", gson.toJson(editquestion));
-        cv1.put("DatasetID", datasetId);
-        cv1.put("RecordId", filledId);
-        cv1.put("ParentFolderID", ParentFolderID);
-        cv1.put("isCompleted", SharedPreferencesUtil.getsInstances(this).getBoolean(Preferences.ISCOMPLETED,false));
-        db.insert("submitquestion", null, cv1);
-        db.close();
+        if (addoredit.equals("add")){
+            db = myDatabaseHelper.getWritableDatabase();
+            ContentValues cv1 = new ContentValues();
+            cv1.put("questionjson", gson.toJson(editquestion));
+            cv1.put("DatasetID", datasetId);
+            cv1.put("RecordId", filledId);
+            cv1.put("Creator", editor.getString(Preferences.USERNAMES, ""));
+            cv1.put("ParentFolderID", ParentFolderID);
+            cv1.put("isCompleted", SharedPreferencesUtil.getsInstances(this).getBoolean(Preferences.ISCOMPLETED,false));
+            cv1.put("CreateTime", getTime());
+            db.insert("submitquestion", null, cv1);
+            db.close();
+        }else if (addoredit.equals("edit")){
+            db = myDatabaseHelper.getWritableDatabase();
+            ContentValues cv1 = new ContentValues();
+            cv1.put("questionjson", gson.toJson(editquestion));
+            cv1.put("DatasetID", datasetId);
+            cv1.put("RecordId", filledId);
+            cv1.put("Creator", editor.getString(Preferences.USERNAMES, ""));
+            cv1.put("ParentFolderID", ParentFolderID);
+            cv1.put("isCompleted", SharedPreferencesUtil.getsInstances(this).getBoolean(Preferences.ISCOMPLETED,false));
+            cv1.put("CreateTime", getTime());
+            db.update("submitquestion", cv1, "CreateTime=?",new String[] {String.valueOf(Other.getTimeStamp(CreateTime,"dd/MM/yyyy HH:mm:ss"))});
+            db.close();
+        }
+
         finish();
     }
 
+    private String getTime() {
+        long time = System.currentTimeMillis();//long now = android.os.SystemClock.uptimeMillis();
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        Date d1 = new Date(time);//Date格式时间
+        String t1 = format.format(d1);//String时间字符串
+        String t3 = String.valueOf(time).substring(0,10)+"000";//String时间戳精确到秒 最后三位是毫秒 1000毫秒 = 1秒
+        return t3;
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

@@ -1,6 +1,7 @@
 package com.example.vcserver.iqapture.bean;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -20,6 +21,8 @@ public class SubmitQuestion{
     public int RecordID;
     //当前dataset所在文件夹编号
     public int FolderID;
+    //本地保存时间
+    public Date CapturedOfflineTime;
     public List<QuestionValue> Values;
 
     public int getCompanyID() {
@@ -68,6 +71,14 @@ public class SubmitQuestion{
 
     public void setFolderID(int folderID) {
         FolderID = folderID;
+    }
+
+    public Date getCapturedOfflineTime() {
+        return CapturedOfflineTime;
+    }
+
+    public void setCapturedOfflineTime(Date capturedOfflineTime) {
+        CapturedOfflineTime = capturedOfflineTime;
     }
 
     public List<QuestionValue> getValues() {

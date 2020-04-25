@@ -14,7 +14,7 @@ public abstract class BaseApi<T> implements Func1<T, String> {
     /*是否显示加载框*/
     private boolean showProgress=true;
     /*基础url*/
-    public static String baseUrl="http://192.168.1.101:6689/";//http://local.valuechain.com/  http://192.168.1.101:6689/  http://test.valuechain.com/
+    public static String baseUrl="http://test.valuechain.com/";//http://local.valuechain.com/  http://192.168.1.101:6689/  http://test.valuechain.com/
     public static String loginUrl="cip/register/LoginByMobile";//AnalytiQs/Interface/SignIn   api/account/SingIn
     /*是否需要缓存处理*/
     private boolean cache=false;

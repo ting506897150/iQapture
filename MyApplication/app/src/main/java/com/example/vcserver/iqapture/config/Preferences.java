@@ -14,6 +14,7 @@ package com.example.vcserver.iqapture.config;
 public class Preferences {
 	public static final String LOGIN = "login";//登陆ip
 	public static final String ISCOMPLETED = "isCompleted";//是否完成
+	public static final String USERNAMES = "usernames";//用户姓名
 	public static final String USERNAME = "username";//账号
 	public static final String PASSWORD = "password";//密码
 	public static final String USERID = "userid";//用户id

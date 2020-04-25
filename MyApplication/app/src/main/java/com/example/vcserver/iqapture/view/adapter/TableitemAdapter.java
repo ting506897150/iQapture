@@ -99,19 +99,19 @@ public class TableitemAdapter extends CommonAdapter<Questionnaire.Question> {
 
                 @Override
                 public void afterTextChanged(Editable editable) {
-                    if(delayRun!=null){
+                    if(delayRun != null){
                         //每次editText有变化的时候，则移除上次发出的延迟线程
                         handler.removeCallbacks(delayRun);
+                    }else{
+                        if (TextUtils.isEmpty(editable.toString())) {
+                            question.setAnswer("");
+                        } else {
+                            question.setAnswer(editable.toString());
+                        }
+                        pos = position;
+                        //延迟800ms，如果不再输入字符，则执行该线程的run方法
+                        handler.postDelayed(delayRun, 2000);
                     }
-
-                    if (TextUtils.isEmpty(editable.toString())) {
-                        question.setAnswer("");
-                    } else {
-                        question.setAnswer(editable.toString());
-                    }
-                    pos = position;
-                    //延迟800ms，如果不再输入字符，则执行该线程的run方法
-                    handler.postDelayed(delayRun, 2000);
                 }
             };
             edit_single.addTextChangedListener(watcher);
@@ -152,16 +152,16 @@ public class TableitemAdapter extends CommonAdapter<Questionnaire.Question> {
                     if(delayRun!=null){
                         //每次editText有变化的时候，则移除上次发出的延迟线程
                         handler.removeCallbacks(delayRun);
+                    }else{
+                        if (TextUtils.isEmpty(editable.toString())) {
+                            question.setAnswer("");
+                        } else {
+                            question.setAnswer(editable.toString());
+                        }
+                        pos = position;
+                        //延迟800ms，如果不再输入字符，则执行该线程的run方法
+                        handler.postDelayed(delayRun, 1000);
                     }
-
-                    if (TextUtils.isEmpty(editable.toString())) {
-                        question.setAnswer("");
-                    } else {
-                        question.setAnswer(editable.toString());
-                    }
-                    pos = position;
-                    //延迟800ms，如果不再输入字符，则执行该线程的run方法
-                    handler.postDelayed(delayRun, 1000);
                 }
             };
             edit_single.addTextChangedListener(watcher);
@@ -292,16 +292,16 @@ public class TableitemAdapter extends CommonAdapter<Questionnaire.Question> {
                     if(delayRun!=null){
                         //每次editText有变化的时候，则移除上次发出的延迟线程
                         handler.removeCallbacks(delayRun);
+                    }else{
+                        if (TextUtils.isEmpty(editable.toString())) {
+                            question.setAnswer("");
+                        } else {
+                            question.setAnswer(editable.toString());
+                        }
+                        pos = position;
+                        //延迟800ms，如果不再输入字符，则执行该线程的run方法
+                        handler.postDelayed(delayRun, 1000);
                     }
-
-                    if (TextUtils.isEmpty(editable.toString())) {
-                        question.setAnswer("");
-                    } else {
-                        question.setAnswer(editable.toString());
-                    }
-                    pos = position;
-                    //延迟800ms，如果不再输入字符，则执行该线程的run方法
-                    handler.postDelayed(delayRun, 1000);
                 }
             };
             edit_single.addTextChangedListener(watcher);
@@ -342,16 +342,16 @@ public class TableitemAdapter extends CommonAdapter<Questionnaire.Question> {
                     if(delayRun!=null){
                         //每次editText有变化的时候，则移除上次发出的延迟线程
                         handler.removeCallbacks(delayRun);
+                    }else{
+                        if (TextUtils.isEmpty(editable.toString())) {
+                            question.setAnswer("");
+                        } else {
+                            question.setAnswer(editable.toString());
+                        }
+                        pos = position;
+                        //延迟800ms，如果不再输入字符，则执行该线程的run方法
+                        handler.postDelayed(delayRun, 1000);
                     }
-
-                    if (TextUtils.isEmpty(editable.toString())) {
-                        question.setAnswer("");
-                    } else {
-                        question.setAnswer(editable.toString());
-                    }
-                    pos = position;
-                    //延迟800ms，如果不再输入字符，则执行该线程的run方法
-                    handler.postDelayed(delayRun, 1000);
                 }
             };
             edit_single.addTextChangedListener(watcher);
@@ -392,16 +392,16 @@ public class TableitemAdapter extends CommonAdapter<Questionnaire.Question> {
                     if(delayRun!=null){
                         //每次editText有变化的时候，则移除上次发出的延迟线程
                         handler.removeCallbacks(delayRun);
+                    }else{
+                        if (TextUtils.isEmpty(editable.toString())) {
+                            question.setAnswer("");
+                        } else {
+                            question.setAnswer(editable.toString());
+                        }
+                        pos = position;
+                        //延迟800ms，如果不再输入字符，则执行该线程的run方法
+                        handler.postDelayed(delayRun, 1000);
                     }
-
-                    if (TextUtils.isEmpty(editable.toString())) {
-                        question.setAnswer("");
-                    } else {
-                        question.setAnswer(editable.toString());
-                    }
-                    pos = position;
-                    //延迟800ms，如果不再输入字符，则执行该线程的run方法
-                    handler.postDelayed(delayRun, 1000);
                 }
             };
             edit_single.addTextChangedListener(watcher);
@@ -579,16 +579,16 @@ public class TableitemAdapter extends CommonAdapter<Questionnaire.Question> {
                     if(delayRun!=null){
                         //每次editText有变化的时候，则移除上次发出的延迟线程
                         handler.removeCallbacks(delayRun);
+                    }else{
+                        if (TextUtils.isEmpty(editable.toString())) {
+                            question.setAnswer("");
+                        } else {
+                            question.setAnswer(editable.toString());
+                        }
+                        pos = position;
+                        //延迟800ms，如果不再输入字符，则执行该线程的run方法
+                        handler.postDelayed(delayRun, 1000);
                     }
-
-                    if (TextUtils.isEmpty(editable.toString())) {
-                        question.setAnswer("");
-                    } else {
-                        question.setAnswer(editable.toString());
-                    }
-                    pos = position;
-                    //延迟800ms，如果不再输入字符，则执行该线程的run方法
-                    handler.postDelayed(delayRun, 1000);
                 }
             };
             edit_single.addTextChangedListener(watcher);
@@ -629,16 +629,16 @@ public class TableitemAdapter extends CommonAdapter<Questionnaire.Question> {
                     if(delayRun!=null){
                         //每次editText有变化的时候，则移除上次发出的延迟线程
                         handler.removeCallbacks(delayRun);
+                    }else{
+                        if (TextUtils.isEmpty(editable.toString())) {
+                            question.setAnswer("");
+                        } else {
+                            question.setAnswer(editable.toString());
+                        }
+                        pos = position;
+                        //延迟800ms，如果不再输入字符，则执行该线程的run方法
+                        handler.postDelayed(delayRun, 1000);
                     }
-
-                    if (TextUtils.isEmpty(editable.toString())) {
-                        question.setAnswer("");
-                    } else {
-                        question.setAnswer(editable.toString());
-                    }
-                    pos = position;
-                    //延迟800ms，如果不再输入字符，则执行该线程的run方法
-                    handler.postDelayed(delayRun, 1000);
                 }
             };
             edit_single.addTextChangedListener(watcher);

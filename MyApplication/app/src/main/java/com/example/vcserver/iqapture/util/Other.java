@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -34,6 +35,12 @@ import static android.content.Context.MODE_PRIVATE;
  */
 
 public class Other {
+
+    public static final int SIZETYPE_B = 1;//获取文件大小单位为B的double值
+    public static final int SIZETYPE_KB = 2;//获取文件大小单位为KB的double值
+    public static final int SIZETYPE_MB = 3;//获取文件大小单位为MB的double值
+    public static final int SIZETYPE_GB = 4;//获取文件大小单位为GB的double值
+
     //将 W12/D3/Y2015转换成正常时间 DD/MM/YYYY
     //W:第几个周 D:第几天(周一到周日，1-7) Y:年份
     public static String Timetransformation(int week,int day,int year){
@@ -335,6 +342,14 @@ public class Other {
         return 0;
     }
 
+    //时间戳转换时间格式
+    public static String getTime(long time) {
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        Date d1 = new Date(time);
+        String t1 = format.format(d1);
+        return t1;
+    }
+
     /** 时间戳转换时间（格式不一样）
      * @param time 例如:1402733340
      * @return dd/MM/yyyy SimpleDateFormat是想转换的格式
@@ -560,5 +575,97 @@ public class Other {
             Log.e("VersionInfo", "Exception", e);
         }
         return versionName;
+    }
+
+    /**
+     * 调用此方法自动计算指定文件或指定文件夹的大小
+     * @param filePath 文件路径  "/data/data/"+ context.getPackageName() + "/databases/"
+     * /data/data/com.example.vcserver.iqapture/databases/iqapture.db
+     * @return 计算好的带B、KB、MB、GB的字符串
+     */
+    public static String getAutoFileOrFilesSize(String filePath){
+        File file=new File(filePath);
+        long blockSize=0;
+        try {
+            if(file.isDirectory()){
+                blockSize = getFileSizes(file);
+            }else{
+                blockSize = getFileSize(file);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("获取文件大小","获取失败!");
+        }
+        return FormetFileSize(blockSize);
+    }
+
+    /**
+     * 获取指定文件夹
+     * @param f
+     * @return
+     * @throws Exception
+     */
+    private static long getFileSizes(File f) throws Exception
+    {
+        long size = 0;
+        File flist[] = f.listFiles();
+        for (int i = 0; i < flist.length; i++){
+            if (flist[i].isDirectory()){
+                size = size + getFileSizes(flist[i]);
+            }
+            else{
+                size =size + getFileSize(flist[i]);
+            }
+        }
+        return size;
+    }
+
+    /**
+     * 获取指定文件大小
+     * @param
+     * @return
+     * @throws Exception
+     */
+    private static long getFileSize(File file) throws Exception
+    {
+        long size = 0;
+        if (file.exists()){
+            FileInputStream fis = null;
+            fis = new FileInputStream(file);
+            size = fis.available();
+        }
+        else{
+            file.createNewFile();
+            Log.e("获取文件大小","文件不存在!");
+        }
+        return size;
+    }
+
+    /**
+     * 转换文件大小
+     * @param fileS
+     * @return
+     */
+    private static String FormetFileSize(long fileS)
+    {
+        DecimalFormat df = new DecimalFormat("#.00");
+        String fileSizeString = "";
+        String wrongSize="0B";
+        if(fileS==0){
+            return wrongSize;
+        }
+        if (fileS < 1024){
+            fileSizeString = df.format((double) fileS).replace(",", ".") + "B";
+        }
+        else if (fileS < 1048576){
+            fileSizeString = df.format((double) fileS / 1024).replace(",", ".") + "KB";
+        }
+        else if (fileS < 1073741824){
+            fileSizeString = df.format((double) fileS / 1048576).replace(",", ".") + "MB";
+        }
+        else{
+            fileSizeString = df.format((double) fileS / 1073741824).replace(",", ".") + "GB";
+        }
+        return fileSizeString;
     }
 }

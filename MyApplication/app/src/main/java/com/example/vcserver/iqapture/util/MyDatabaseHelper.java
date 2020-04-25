@@ -29,14 +29,14 @@ public class MyDatabaseHelper extends SQLiteOpenHelper{
         );
 
         db.execSQL("CREATE TABLE IF NOT EXISTS loginresult("
-                + "UserID integer unique primary key,"
+                + "UserID integer primary key,"
                 + "Username varchar,"
                 + "DefaultCompany integer,"
                 + "MyCompanies varchar )"
         );
 
         db.execSQL("CREATE TABLE IF NOT EXISTS datasetresult("
-                + "ID integer unique primary key,"
+                + "ID integer primary key unique,"
                 + "Name varchar,"
                 + "Base64Icon varchar,"
                 + "isFolder varchar,"
@@ -44,7 +44,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper{
         );
 
         db.execSQL("CREATE TABLE IF NOT EXISTS filledresult("
-                + "ID integer unique primary key,"
+                + "ID integer,"
                 + "DatasetID integer,"
                 + "RowNo integer,"
                 + "IsCompeleted varchar,"
@@ -57,14 +57,14 @@ public class MyDatabaseHelper extends SQLiteOpenHelper{
                 + "IsLastPage varchar,"
                 + "isCompleted varchar,"
                 + "DatasetID integer,"
-                + "RecordId integer unique primary key)"
+                + "RecordId integer)"
         );
 
         db.execSQL("CREATE TABLE IF NOT EXISTS questionmodelresult("
                 + "section varchar,"
                 + "IsLastPage varchar,"
                 + "isCompleted varchar,"
-                + "DatasetID integer unique primary key,"
+                + "DatasetID integer primary key unique,"
                 + "RecordId integer)"
         );
 
@@ -72,8 +72,10 @@ public class MyDatabaseHelper extends SQLiteOpenHelper{
                 + "questionjson varchar,"
                 + "DatasetID integer,"
                 + "RecordId integer,"
+                + "Creator varchar,"
                 + "isCompleted varchar,"
-                + "ParentFolderID integer)"
+                + "ParentFolderID integer,"
+                + "CreateTime varchar)"
         );
     }
 

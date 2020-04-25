@@ -41,6 +41,45 @@
                 android:gravity="center_vertical"
                 android:textSize="48px"/>
         </com.zhy.autolayout.AutoRelativeLayout>
+        <com.zhy.autolayout.AutoRelativeLayout
+            android:visibility="gone"
+            android:id="@+id/rlayout_back"
+            android:layout_width="match_parent"
+            android:layout_height="146px">
+            <ImageView
+                android:visibility="visible"
+                android:layout_toRightOf="@+id/img_menu"
+                android:id="@+id/img_back"
+                android:layout_centerVertical="true"
+                android:background="@mipmap/back"
+                android:layout_marginLeft="20px"
+                android:layout_width="80px"
+                android:layout_height="80px"/>
+            <ImageView
+                android:layout_marginLeft="50px"
+                android:layout_toRightOf="@+id/img_back"
+                android:background="@mipmap/add"
+                android:layout_centerVertical="true"
+                android:visibility="gone"
+                android:id="@+id/img_add"
+                android:layout_width="80px"
+                android:layout_height="80px"/>
+            <Switch
+                android:checked="true"
+                android:visibility="gone"
+                android:showText="true"
+                android:textOn="OFF"
+                android:textOff="ON"
+                android:switchTextAppearance="@style/SwitchTheme"
+                android:thumb="@drawable/switch_rectangle_thumb_selector"
+                android:track="@drawable/switch_rectangle_track"
+                android:id="@+id/switch_offline"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="50px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </com.zhy.autolayout.AutoRelativeLayout>
         <com.zhy.autolayout.AutoLinearLayout
             android:paddingLeft="24px"
             android:paddingRight="24px"

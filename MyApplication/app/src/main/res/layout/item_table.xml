@@ -1,11 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.zhy.autolayout.AutoLinearLayout
+<!--<com.zhy.autolayout.AutoLinearLayout-->
+    <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:orientation="vertical">-->
+    <!--<android.support.v7.widget.RecyclerView-->
+        <!--android:id="@+id/item_recyclerview"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"/>-->
+<!--</com.zhy.autolayout.AutoLinearLayout>-->
+<com.example.vcserver.iqapture.util.SlidingButtonView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="1dp"
     android:orientation="vertical">
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/item_recyclerview"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-</com.zhy.autolayout.AutoLinearLayout>
+        android:layout_height="wrap_content">
+
+        <!--删除按钮-->
+        <TextView
+            android:id="@+id/tv_delete"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/layout_content"
+            android:background="@drawable/btn_click_red_bg"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="删除"
+            android:textColor="@android:color/white"/>
+        <RelativeLayout
+            android:id="@+id/layout_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/item_recyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </RelativeLayout>
+    </RelativeLayout>
+</com.example.vcserver.iqapture.util.SlidingButtonView>

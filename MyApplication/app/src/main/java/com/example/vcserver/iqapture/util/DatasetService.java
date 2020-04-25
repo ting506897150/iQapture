@@ -62,6 +62,10 @@ public class DatasetService extends Service {
     private int state = 0;
     ContentValues cv1;
     Questionnaire questionnaire;
+
+    private boolean data;
+    public static final String COUNTER = "data";
+    public static final String ACTION_NAME = "com.example.vcserver.iqapture.COUNTER_ACTION";
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -72,7 +76,6 @@ public class DatasetService extends Service {
     public void onCreate() {
         super.onCreate();
         myDatabaseHelper = new MyDatabaseHelper(this);
-        myRecordDatabaseHelper = new MyRecordDatabaseHelper(this);
         db = myDatabaseHelper.getWritableDatabase();
         //判断表是否为空，便于每次重新添加数据
         if (db.rawQuery("SELECT * FROM datasetresult",null).getCount() > 0){
@@ -84,18 +87,39 @@ public class DatasetService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        //从Activity获取data
+        data = intent.getBooleanExtra(COUNTER, false);
         //网络请求
-        if (state == 0){//判断service 在什么位置被重启  0 dataset
-            dataset();//获取所有的dataset
-        }else if (state == 1){//1 filled
-            filled(datasetResult.get(dataseti).getID());//获取所有的filled 如果service重启  则调用重启之前的dataseti继续获取
-        }else if (state == 2){//2 question
-            pagesize = 1;
-            question(recordList.get(filledi).getDatasetID(),recordList.get(filledi).getID(),pagesize);//获取所有的question 如果service重启  则调用重启之前的filledi继续获取
-        }else{//2 questionmodel
-            pagesize = 1;
-            questionmodel(recordList.get(filledi).getDatasetID(),pagesize);//获取所有的question 如果service重启  则调用重启之前的filledi继续获取
-        }
+//        if (state == 0){//判断service 在什么位置被重启  0 dataset
+//            dataset();//获取所有的dataset
+//        }else if (state == 1){//1 filled
+////            filled(datasetResult.get(dataseti).getID());//获取所有的filled 如果service重启  则调用重启之前的dataseti继续获取
+//        }else if (state == 2){//2 question
+////            pagesize = 1;
+////            question(recordList.get(filledi).getDatasetID(),recordList.get(filledi).getID(),pagesize);//获取所有的question 如果service重启  则调用重启之前的filledi继续获取
+//        }else{//2 questionmodel
+////            pagesize = 1;
+////            questionmodel(recordList.get(filledi).getDatasetID(),pagesize);//获取所有的question 如果service重启  则调用重启之前的filledi继续获取
+//        }
+
+
+        //开启一个线程，对数据进行处理
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (state == 0){//判断service 在什么位置被重启  0 dataset
+                        dataset();//获取所有的dataset
+                    }
+                    Thread.sleep(3000);
+                    //耗时操作：数据处理并保存，向Activity发送广播
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -122,44 +146,76 @@ public class DatasetService extends Service {
             @Override public void onResponse(Call call, Response response) throws IOException {
                 String responseStr = response.body().string();
                 datasetResult = JSON.parseArray(responseStr, DatasetResult.IQDataset.class);
-                for (int i = 0; i < datasetResult.size(); i++) {
-                    cv1 = new ContentValues();
-                    cv1.put("ID", datasetResult.get(i).getID());
-                    cv1.put("Name", datasetResult.get(i).getName());
-                    cv1.put("Base64Icon", datasetResult.get(i).getBase64Icon());
-                    cv1.put("isFolder", datasetResult.get(i).isFolder());
-                    cv1.put("ParentFolderID", datasetResult.get(i).getParentFolderID());
-                    db.insert("datasetresult", null, cv1);
-                    if (datasetResult.get(i).isFolder() == true){
-                        if (datasetResult.get(i).getChildrens() != null){
-                            for (int j = 0; j < datasetResult.get(i).getChildrens().size(); j++) {
-                                cv1 = new ContentValues();
-                                cv1.put("ID", datasetResult.get(i).getChildrens().get(j).getID());
-                                cv1.put("Name", datasetResult.get(i).getChildrens().get(j).getName());
-                                cv1.put("Base64Icon", datasetResult.get(i).getChildrens().get(j).getBase64Icon());
-                                cv1.put("isFolder", datasetResult.get(i).getChildrens().get(j).isFolder());
-                                cv1.put("ParentFolderID", datasetResult.get(i).getChildrens().get(j).getParentFolderID());
-                                db.insert("datasetresult", null, cv1);
-                                if (datasetResult.get(i).getChildrens().get(j).isFolder() == true){
-                                    if (datasetResult.get(i).getChildrens().get(j).getChildrens() != null){
-                                        for (int k = 0; k < datasetResult.get(i).getChildrens().get(j).getChildrens().size(); k++) {
-                                            cv1 = new ContentValues();
-                                            cv1.put("ID", datasetResult.get(i).getChildrens().get(j).getChildrens().get(k).getID());
-                                            cv1.put("Name", datasetResult.get(i).getChildrens().get(j).getChildrens().get(k).getName());
-                                            cv1.put("Base64Icon", datasetResult.get(i).getChildrens().get(j).getChildrens().get(k).getBase64Icon());
-                                            cv1.put("isFolder", datasetResult.get(i).getChildrens().get(j).getChildrens().get(k).isFolder());
-                                            cv1.put("ParentFolderID", datasetResult.get(i).getChildrens().get(j).getChildrens().get(k).getParentFolderID());
-                                            db.insert("datasetresult", null, cv1);
-                                            if (datasetResult.get(i).getChildrens().get(j).getChildrens().get(k).isFolder() == true){
-                                                if (datasetResult.get(i).getChildrens().get(j).getChildrens().get(k).getChildrens() != null){
-                                                    for (int l = 0; l < datasetResult.get(i).getChildrens().get(j).getChildrens().get(k).getChildrens().size(); l++) {
-                                                        cv1 = new ContentValues();
-                                                        cv1.put("ID", datasetResult.get(i).getChildrens().get(j).getChildrens().get(k).getChildrens().get(l).getID());
-                                                        cv1.put("Name", datasetResult.get(i).getChildrens().get(j).getChildrens().get(k).getChildrens().get(l).getName());
-                                                        cv1.put("Base64Icon", datasetResult.get(i).getChildrens().get(j).getChildrens().get(k).getChildrens().get(l).getBase64Icon());
-                                                        cv1.put("isFolder", datasetResult.get(i).getChildrens().get(j).getChildrens().get(k).getChildrens().get(l).isFolder());
-                                                        cv1.put("ParentFolderID", datasetResult.get(i).getChildrens().get(j).getChildrens().get(k).getChildrens().get(l).getParentFolderID());
-                                                        db.insert("datasetresult", null, cv1);
+                try{
+                    if (datasetResult.size() > 0){
+                        for (int i = 0; i < datasetResult.size(); i++) {
+                            cv1 = new ContentValues();
+                            cv1.put("ID", datasetResult.get(i).getID());
+                            cv1.put("Name", datasetResult.get(i).getName());
+                            cv1.put("Base64Icon", datasetResult.get(i).getBase64Icon() == null?"":datasetResult.get(i).getBase64Icon());
+                            cv1.put("isFolder", datasetResult.get(i).isFolder());
+                            cv1.put("ParentFolderID", datasetResult.get(i).getParentFolderID());
+                            db.replace("datasetresult", null, cv1);
+                            cv1 = null;
+                        }
+                        for (int i = 0; i < datasetResult.size(); i++) {
+                            if (datasetResult.get(i).isFolder() == true){
+                                if (datasetResult.get(i).getChildrens() != null && datasetResult.get(i).getChildrens().size() > 0){
+                                    for (int j = 0; j < datasetResult.get(i).getChildrens().size(); j++) {
+                                        cv1 = new ContentValues();
+                                        cv1.put("ID", datasetResult.get(i).getChildrens().get(j).getID());
+                                        cv1.put("Name", datasetResult.get(i).getChildrens().get(j).getName());
+                                        cv1.put("Base64Icon", datasetResult.get(i).getChildrens().get(j).getBase64Icon() == null?"":datasetResult.get(i).getChildrens().get(j).getBase64Icon());
+                                        cv1.put("isFolder", datasetResult.get(i).getChildrens().get(j).isFolder());
+                                        cv1.put("ParentFolderID", datasetResult.get(i).getChildrens().get(j).getParentFolderID());
+                                        db.replace("datasetresult", null, cv1);
+                                        cv1 = null;
+                                    }
+                                }
+                            }
+                        }
+                        for (int i = 0; i < datasetResult.size(); i++) {
+                            if (datasetResult.get(i).isFolder() == true){
+                                if (datasetResult.get(i).getChildrens() != null && datasetResult.get(i).getChildrens().size() > 0){
+                                    for (int j = 0; j < datasetResult.get(i).getChildrens().size(); j++) {
+                                        if (datasetResult.get(i).getChildrens().get(j).isFolder() == true){
+                                            if (datasetResult.get(i).getChildrens().get(j).getChildrens() != null && datasetResult.get(i).getChildrens().get(j).getChildrens().size() > 0){
+                                                for (int k = 0; k < datasetResult.get(i).getChildrens().get(j).getChildrens().size(); k++) {
+                                                    cv1 = new ContentValues();
+                                                    cv1.put("ID", datasetResult.get(i).getChildrens().get(j).getChildrens().get(k).getID());
+                                                    cv1.put("Name", datasetResult.get(i).getChildrens().get(j).getChildrens().get(k).getName());
+                                                    cv1.put("Base64Icon", datasetResult.get(i).getChildrens().get(j).getChildrens().get(k).getBase64Icon() == null?"":datasetResult.get(i).getChildrens().get(j).getChildrens().get(k).getBase64Icon());
+                                                    cv1.put("isFolder", datasetResult.get(i).getChildrens().get(j).getChildrens().get(k).isFolder());
+                                                    cv1.put("ParentFolderID", datasetResult.get(i).getChildrens().get(j).getChildrens().get(k).getParentFolderID());
+                                                    db.replace("datasetresult", null, cv1);
+                                                    cv1 = null;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        for (int i = 0; i < datasetResult.size(); i++) {
+                            if (datasetResult.get(i).isFolder() == true){
+                                if (datasetResult.get(i).getChildrens() != null && datasetResult.get(i).getChildrens().size() > 0){
+                                    for (int j = 0; j < datasetResult.get(i).getChildrens().size(); j++) {
+                                        if (datasetResult.get(i).getChildrens().get(j).isFolder() == true){
+                                            if (datasetResult.get(i).getChildrens().get(j).getChildrens() != null && datasetResult.get(i).getChildrens().get(j).getChildrens().size() > 0){
+                                                for (int k = 0; k < datasetResult.get(i).getChildrens().get(j).getChildrens().size(); k++) {
+                                                    if (datasetResult.get(i).getChildrens().get(j).getChildrens().get(k).isFolder() == true){
+                                                        if (datasetResult.get(i).getChildrens().get(j).getChildrens().get(k).getChildrens() != null && datasetResult.get(i).getChildrens().get(j).getChildrens().get(k).getChildrens().size() > 0){
+                                                            for (int l = 0; l < datasetResult.get(i).getChildrens().get(j).getChildrens().get(k).getChildrens().size(); l++) {
+                                                                cv1 = new ContentValues();
+                                                                cv1.put("ID", datasetResult.get(i).getChildrens().get(j).getChildrens().get(k).getChildrens().get(l).getID());
+                                                                cv1.put("Name", datasetResult.get(i).getChildrens().get(j).getChildrens().get(k).getChildrens().get(l).getName());
+                                                                cv1.put("Base64Icon", datasetResult.get(i).getChildrens().get(j).getChildrens().get(k).getChildrens().get(l).getBase64Icon() == null?"":datasetResult.get(i).getChildrens().get(j).getChildrens().get(k).getChildrens().get(l).getBase64Icon());
+                                                                cv1.put("isFolder", datasetResult.get(i).getChildrens().get(j).getChildrens().get(k).getChildrens().get(l).isFolder());
+                                                                cv1.put("ParentFolderID", datasetResult.get(i).getChildrens().get(j).getChildrens().get(k).getChildrens().get(l).getParentFolderID());
+                                                                db.replace("datasetresult", null, cv1);
+                                                                cv1 = null;
+                                                            }
+                                                        }
                                                     }
                                                 }
                                             }
@@ -169,28 +225,41 @@ public class DatasetService extends Service {
                             }
                         }
                     }
+
+                    //取出dataset数据
+                    String sql = "SELECT * FROM datasetresult";
+                    Cursor cursor = db.rawQuery(sql, null);
+                    datasetResult.clear();
+                    while(cursor.moveToNext()){
+                        dataset = new DatasetResult.IQDataset();
+                        dataset.setID(cursor.getInt(cursor.getColumnIndex("ID")));
+                        dataset.setName(cursor.getString(cursor.getColumnIndex("Name")));
+                        dataset.setBase64Icon(cursor.getString(cursor.getColumnIndex("Base64Icon")));
+                        dataset.setFolder(cursor.getString(cursor.getColumnIndex("isFolder")).equals("1") ? true : false);
+                        dataset.setParentFolderID(cursor.getInt(cursor.getColumnIndex("ParentFolderID")));
+                        datasetResult.add(dataset);
+                        dataset = null;
+                    }
+
+                    cursor.close();
+                    db.close();
+                    datasetTotal = datasetResult.size();
+                    Log.i("", "onResponse datasetTotal: "+datasetTotal);
+                    data = true;
+                    final Intent mIntent = new Intent();
+                    mIntent.setAction(ACTION_NAME);
+                    mIntent.putExtra(COUNTER, data);
+                    sendBroadcast(mIntent);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.i("", "onResponse:  DatasetService出错了");
+                    data = false;
+                    final Intent mIntent = new Intent();
+                    mIntent.setAction(ACTION_NAME);
+                    mIntent.putExtra(COUNTER, data);
+                    sendBroadcast(mIntent);
                 }
 
-                cv1 = null;
-                //取出dataset数据
-                String sql = "SELECT * FROM datasetresult";
-                Cursor cursor = db.rawQuery(sql, null);
-                datasetResult.clear();
-                while(cursor.moveToNext()){
-                    dataset = new DatasetResult.IQDataset();
-                    dataset.setID(cursor.getInt(cursor.getColumnIndex("ID")));
-                    dataset.setName(cursor.getString(cursor.getColumnIndex("Name")));
-                    dataset.setBase64Icon(cursor.getString(cursor.getColumnIndex("Base64Icon")));
-                    dataset.setFolder(Boolean.valueOf(cursor.getString(cursor.getColumnIndex("isFolder"))));
-                    dataset.setParentFolderID(cursor.getInt(cursor.getColumnIndex("ParentFolderID")));
-                    datasetResult.add(dataset);
-                    dataset = null;
-                }
-
-                cursor.close();
-                db.close();
-//                datasetTotal = datasetResult.size();
-//                Log.i("", "onResponse datasetTotal: "+datasetTotal);
 //                if (datasetTotal > 0){
 //                    filled(datasetResult.get(dataseti).getID());
 //                }

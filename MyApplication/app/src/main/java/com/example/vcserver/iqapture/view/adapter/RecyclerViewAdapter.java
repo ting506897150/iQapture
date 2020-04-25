@@ -132,7 +132,7 @@ public class RecyclerViewAdapter extends CommonAdapter<Questionnaire.Question>{
     //利用接口回调点击
     private OnGridItemClickListener onGridItemClickListener;//点击
 
-    int checkboxnum;
+//    int checkboxnum;
 
     public RecyclerViewAdapter(QuestionnaireActivity context, int layoutId, List<Questionnaire.Question> datas) {
         super(context, layoutId, datas);
@@ -370,7 +370,7 @@ public class RecyclerViewAdapter extends CommonAdapter<Questionnaire.Question>{
             recyclerview_checkbox.setAdapter(checkBoxAdapter);
             checkBoxAdapter.notifyDataSetChanged();
 
-            checkboxnum = 0;
+//            checkboxnum = 0;
             //判断取出数据是否为空，不为空则赋值
             if (!TextUtils.isEmpty(s.getAnswer())){
                 String[] selectpos = s.getAnswer().split("[<|>]");
@@ -379,7 +379,7 @@ public class RecyclerViewAdapter extends CommonAdapter<Questionnaire.Question>{
                         if (filledValuesList.get(i).getOptionName().equals(selectpos[j])){
                             filledValuesList.get(i).setChecked(true);
                             mDatas.get(position).getOptions().get(i).setChecked(true);//设为选中.
-                            checkboxnum++;
+//                            checkboxnum++;
                             //是否加载了衍生问题
                             if (s.isIsderivativeshow() == false){
                                 //是否具有衍生问题
@@ -407,26 +407,32 @@ public class RecyclerViewAdapter extends CommonAdapter<Questionnaire.Question>{
                     @Override
                     public void onItemClick(View view, int pos) {
                         if (s.getAnswersLimitMax() > 0){
-                            if (checkboxnum < (s.getAnswersLimitMax())){
+                            int x = 0;
+                            for (int i = 0; i < filledValuesList.size(); i++) {
+                                if (filledValuesList.get(i).isChecked()){
+                                    x++;
+                                }
+                            }
+                            if (x < (s.getAnswersLimitMax())){
                                 //判断是否已选中，如果已选中则取消选中
                                 if (filledValuesList.get(pos).isChecked()){
                                     filledValuesList.get(pos).setChecked(false);
                                     mDatas.get(position).getOptions().get(pos).setChecked(false);
-                                    checkboxnum--;
+//                                    checkboxnum--;
                                 }else{
                                     filledValuesList.get(pos).setChecked(true);//点击的设为选中.
                                     mDatas.get(position).getOptions().get(pos).setChecked(true);
-                                    checkboxnum++;
+//                                    checkboxnum++;
                                 }
                                 //加载衍生问题
                                 derivative(position,pos,"");
                             }else{
-                                if (checkboxnum == s.getAnswersLimitMax()){
+                                if (x == s.getAnswersLimitMax()){
                                     //判断是否已选中，如果已选中则取消选中
                                     if (filledValuesList.get(pos).isChecked()){
                                         filledValuesList.get(pos).setChecked(false);
                                         mDatas.get(position).getOptions().get(pos).setChecked(false);
-                                        checkboxnum--;
+//                                        checkboxnum--;
                                         //加载衍生问题
                                         derivative(position,pos,"");
                                     }else{
@@ -443,11 +449,11 @@ public class RecyclerViewAdapter extends CommonAdapter<Questionnaire.Question>{
                             if (filledValuesList.get(pos).isChecked()){
                                 filledValuesList.get(pos).setChecked(false);
                                 mDatas.get(position).getOptions().get(pos).setChecked(false);
-                                checkboxnum--;
+//                                checkboxnum--;
                             }else{
                                 filledValuesList.get(pos).setChecked(true);//点击的设为选中.
                                 mDatas.get(position).getOptions().get(pos).setChecked(true);
-                                checkboxnum++;
+//                                checkboxnum++;
                             }
                             //加载衍生问题
                             derivative(position,pos,"");
@@ -583,6 +589,7 @@ public class RecyclerViewAdapter extends CommonAdapter<Questionnaire.Question>{
                     filledValues = new Questionnaire.Options();
                     filledValues.setOptionID(s.getOptions().get(i).getOptionID());
                     filledValues.setOptionName(s.getOptions().get(i).getOptionName());
+                    filledValues.setOptionColor(s.getOptions().get(i).getOptionColor());
                     filledValues.setChecked(false);
                     filledValuesList.add(filledValues);
                 }
@@ -595,6 +602,7 @@ public class RecyclerViewAdapter extends CommonAdapter<Questionnaire.Question>{
             for (int i = 0; i < filledValuesList.size(); i++) {
                 if (filledValuesList.get(i).getOptionName().equals(s.getAnswer())){
                     spinner_down.setText(filledValuesList.get(i).getOptionName());
+                    spinner_down.setBackgroundColor(!TextUtils.isEmpty(filledValuesList.get(i).getOptionColor())?Color.parseColor(filledValuesList.get(i).getOptionColor()):Color.parseColor("#FFFFFF"));
                     //是否加载了衍生问题
                     if (s.isIsderivativeshow() == false){
                         //是否具有衍生问题
@@ -2965,58 +2973,6 @@ public class RecyclerViewAdapter extends CommonAdapter<Questionnaire.Question>{
             TableAdapter tableAdapter = new TableAdapter(mContext,R.layout.item_table,alllistquestion);
             recyclerview_table.setLayoutManager(new LinearLayoutManager(mContext));
             recyclerview_table.addItemDecoration(new LinerLayoutItemDecoration(mContext, R.drawable.item_dirver_listview));//分割线
-            recyclerview_table.setItemViewSwipeEnabled(true);// 开启滑动删除。默认关闭。
-            // 创建菜单：
-            SwipeMenuCreator mSwipeMenuCreator = new SwipeMenuCreator() {
-                @Override
-                public void onCreateMenu(SwipeMenu leftMenu, SwipeMenu rightMenu, int viewType) {
-           /* SwipeMenuItem deleteItem = new SwipeMenuItem(mContext);
-            // 各种文字和图标属性设置。
-            leftMenu.addMenuItem(deleteItem); // 在Item左侧添加一个菜单。*/
-
-
-                    // 在Item右侧添加一个菜单。
-                    // 1.编辑
-                    // 各种文字和图标属性设置。
-                    SwipeMenuItem modifyItem = new SwipeMenuItem(mContext)
-                            .setBackgroundColor(mContext.getResources().getColor(R.color.loginbtn))
-                            .setText("编辑")
-                            .setTextColor(Color.BLACK)
-                            .setTextSize(15) // 文字大小。
-                            .setWidth(140)
-                            .setHeight(ViewGroup.LayoutParams.MATCH_PARENT);
-                    rightMenu.addMenuItem(modifyItem);
-                    // 2 删除
-                    SwipeMenuItem deleteItem = new SwipeMenuItem(mContext);
-                    deleteItem.setText("删除")
-                            .setBackgroundColor(mContext.getResources().getColor(R.color.red))
-                            .setTextColor(Color.WHITE) // 文字颜色。
-                            .setTextSize(15) // 文字大小。
-                            .setWidth(140)
-                            .setHeight(ViewGroup.LayoutParams.MATCH_PARENT);
-
-                    rightMenu.addMenuItem(deleteItem);
-
-                    // 注意：哪边不想要菜单，那么不要添加即可。
-                }
-            };
-            // 设置监听器。
-            recyclerview_table.setSwipeMenuCreator(mSwipeMenuCreator);
-
-            SwipeMenuItemClickListener mMenuItemClickListener = new SwipeMenuItemClickListener() {
-                @Override
-                public void onItemClick(SwipeMenuBridge menuBridge) {
-                    // 任何操作必须先关闭菜单，否则可能出现Item菜单打开状态错乱。
-                    menuBridge.closeMenu();
-                    int direction = menuBridge.getDirection(); // 左侧还是右侧菜单。
-                    int adapterPosition = menuBridge.getAdapterPosition(); // RecyclerView的Item的position。
-                    int menuPosition = menuBridge.getPosition(); // 菜单在RecyclerView的Item中的Position。
-                    Toast.makeText(mContext, direction + " " + adapterPosition + " " + menuPosition, Toast.LENGTH_SHORT).show();
-                }
-            };
-
-            // 菜单点击监听。
-            recyclerview_table.setSwipeMenuItemClickListener(mMenuItemClickListener);
 
             recyclerview_table.setAdapter(tableAdapter);
             if (SharedPreferencesUtil.getsInstances(mContext).getBoolean(Preferences.ISCOMPLETED,false) == false){
@@ -3081,6 +3037,8 @@ public class RecyclerViewAdapter extends CommonAdapter<Questionnaire.Question>{
                         onGridItemClickListener.onGridItemceshiClick(position);
                     }
                 });
+
+
             }
         }
     }
@@ -3623,7 +3581,11 @@ public class RecyclerViewAdapter extends CommonAdapter<Questionnaire.Question>{
                         }
                 }
             }else{
-                mDatas.get(position).setAnswer(mDatas.get(position).getOptions().get(pos).getOptionName());
+                if (search.equals("search")){
+                    mDatas.get(position).setAnswer(optionDetails.getOptions().get(pos).getOptionName());//当下拉列表带搜索框时  mDatas.get(position).getOptions()里面衍生问题列表不存在
+                }else{
+                    mDatas.get(position).setAnswer(mDatas.get(position).getOptions().get(pos).getOptionName());
+                }
             }
         }
         onGridItemClickListener.onGridItemceshiClick(position);

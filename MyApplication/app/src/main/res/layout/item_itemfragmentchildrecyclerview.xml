@@ -2,39 +2,43 @@
 <com.zhy.autolayout.AutoRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content">
-    <com.zhy.autolayout.AutoLinearLayout
+    <com.zhy.autolayout.AutoRelativeLayout
         android:id="@+id/list_item"
-        android:padding="24px"
+        android:paddingLeft="24px"
+        android:paddingRight="24px"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="144px">
         <TextView
-            android:layout_weight="2"
+            android:textStyle="bold"
+            android:layout_marginTop="20px"
             android:text="21/07/2018 14:28"
-            android:textColor="@color/left"
-            android:textSize="36px"
+            android:textColor="@color/item_recycler_font"
+            android:textSize="30px"
             android:id="@+id/text_month"
-            android:layout_width="0px"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         <TextView
-            android:layout_weight="2"
+            android:layout_marginTop="10px"
+            android:layout_below="@+id/text_month"
             android:singleLine="true"
             android:ellipsize="end"
-            android:text="Name"
-            android:textColor="@color/left"
+            android:text="JOSN SMITH"
+            android:textColor="@color/center"
             android:textSize="36px"
             android:id="@+id/text_name"
-            android:layout_width="0px"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         <TextView
-            android:gravity="center"
-            android:layout_weight="1"
-            android:text="1"
+            android:textStyle="bold"
+            android:layout_marginTop="20px"
+            android:layout_alignParentRight="true"
+            android:text="28880"
             android:textColor="@color/left"
-            android:textSize="36px"
+            android:textSize="30px"
             android:id="@+id/text_num"
-            android:layout_width="0px"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
-    </com.zhy.autolayout.AutoLinearLayout>
+    </com.zhy.autolayout.AutoRelativeLayout>
     <View
         android:layout_below="@+id/list_item"
         style="@style/horizontaldivider"/>

@@ -803,7 +803,7 @@
                 android:layout_height="wrap_content"/>
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerview_radiobutton"
-                android:background="@drawable/bg_server"
+                android:background="@drawable/bg_seach"
                 android:layout_marginTop="24px"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
@@ -857,7 +857,7 @@
                 android:layout_height="wrap_content"/>
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerview_checkbox"
-                android:background="@drawable/bg_server"
+                android:background="@drawable/bg_seach"
                 android:layout_marginTop="24px"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
@@ -917,7 +917,7 @@
                 <TextView
                     android:gravity="center"
                     android:layout_centerVertical="true"
-                    android:background="@drawable/bg_server"
+                    android:background="@drawable/bg_seach"
                     android:id="@+id/text_seekbarnum"
                     android:layout_width="96px"
                     android:layout_height="wrap_content"/>

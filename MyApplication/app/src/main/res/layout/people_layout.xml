@@ -41,7 +41,7 @@
                 android:id="@+id/edit_search"
                 android:layout_width="match_parent"
                 android:layout_height="96px"
-                android:background="@drawable/bg_seach2"
+                android:background="@drawable/bg_seach"
                 android:gravity="center_vertical"
                 android:textSize="48px"/>
         </com.zhy.autolayout.AutoRelativeLayout>
@@ -65,7 +65,7 @@
             android:paddingLeft="24px"
             android:paddingRight="24px"
             android:gravity="center_vertical"
-            android:background="@drawable/bg_seach2">
+            android:background="@drawable/bg_seach">
             <ImageView
                 android:src="@mipmap/delete"
                 android:layout_width="50px"

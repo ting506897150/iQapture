@@ -31,6 +31,6 @@ public class Item2Adapter extends CommonAdapter<FilledResult.IQRecord> {
 
         holder.setText(R.id.text_month, s.getCreateTime());
         holder.setText(R.id.text_name,s.getCreator());
-        holder.setText(R.id.text_num,String.valueOf(s.getRowNo()));
+        holder.setText(R.id.text_num,"ID："+String.valueOf(s.getRowNo()));
     }
 }

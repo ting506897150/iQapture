@@ -12,6 +12,7 @@ import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.DrawerLayout;
@@ -30,11 +31,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+
 import com.example.vcserver.iqapture.R;
 import com.example.vcserver.iqapture.bean.Questionnaire;
 import com.example.vcserver.iqapture.bean.Questionnaires;
@@ -65,6 +68,7 @@ import com.wzgiceman.rxretrofitlibrary.retrofit_rx.Api.BaseApi;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.utils.AppUtil;
 import com.zhy.autolayout.AutoLinearLayout;
 import com.zhy.autolayout.AutoRelativeLayout;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -74,7 +78,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import butterknife.Bind;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -114,10 +120,12 @@ public class MainActivity extends BaseActivity<DatasetPresenter> implements IDat
     AutoRelativeLayout searchlayout;
     @Bind(R.id.recyclerview_record_item)
     RecyclerView recyclerviewRecordItem;
-    @Bind(R.id.rlayout_back)
-    AutoRelativeLayout rlayoutBack;
+    @Bind(R.id.button_add)
+    Button buttonAdd;
     @Bind(R.id.switch_offline)
     Switch switchOffline;
+    @Bind(R.id.record_menu)
+    AutoRelativeLayout recordMenu;
 
     private AlertDialog mDialog;
 
@@ -184,6 +192,7 @@ public class MainActivity extends BaseActivity<DatasetPresenter> implements IDat
     Intent mintent;//service
     private MyReceiver myReceiver;
     double dbnum = 100.00;
+
     @Override
     protected void initView() {
         setContentView(R.layout.activity_main);
@@ -262,53 +271,35 @@ public class MainActivity extends BaseActivity<DatasetPresenter> implements IDat
         switchOffline.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (switchOffline.isChecked()){
-                    db = myDatabaseHelper.getWritableDatabase();
-                    //清除离线过的model数据
-                    db.delete("questionmodelresult", "DatasetID = ?", new String[] { String.valueOf(folderid)});
-                    db.close();
-                }else {
+                if (switchOffline.isChecked()) {
                     String xx = Other.getAutoFileOrFilesSize("/data/data/com.example.vcserver.iqapture/databases/iqapture.db");//String 1.03(KB/MB/GB)
-                    Double dx = Double.valueOf(xx.substring(0,xx.length() - 2));//1.03
-                    String dw = xx.substring(xx.length() - 2,xx.length());//(KB/MB/GB)
-                    Log.i("", "init: dx="+dx+",dw="+dw+",xx="+xx);
-                    if (dw.equals("MB") && dx > dbnum){
-                        switchOffline.setChecked(true);
+                    Double dx = Double.valueOf(xx.substring(0, xx.length() - 2));//1.03
+                    String dw = xx.substring(xx.length() - 2, xx.length());//(KB/MB/GB)
+                    Log.i("", "init: dx=" + dx + ",dw=" + dw + ",xx=" + xx);
+                    if (dw.equals("MB") && dx > dbnum) {
+                        switchOffline.setChecked(false);
                         showTip("Your device has reached its memory limit. Please clear some space on your device before trying this operation again.\n");
-                    }else{
+                    } else {
                         //没超出
                         TransforData = false;
                         showLoadingDialog();
                         questionmodel(folderid, 0, page);//加载question模板
                     }
+                } else {
+                    db = myDatabaseHelper.getWritableDatabase();
+                    //清除离线过的model数据
+                    db.delete("questionmodelresult", "DatasetID = ?", new String[]{String.valueOf(folderid)});
+                    db.close();
                 }
-//                switchOffline.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//                    @Override
-//                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                        if (isChecked){
-//                            db = myDatabaseHelper.getWritableDatabase();
-//                            //清除离线过的model数据
-//                            db.delete("questionmodelresult", "DatasetID = ?", new String[] { String.valueOf(folderid)});
-//                            db.close();
-//                        }else {
-//                            String xx = Other.getAutoFileOrFilesSize("/data/data/com.example.vcserver.iqapture/databases/iqapture.db");//String 1.03(KB/MB/GB)
-//                            Double dx = Double.valueOf(xx.substring(0,xx.length() - 2));//1.03
-//                            String dw = xx.substring(xx.length() - 2,xx.length());//(KB/MB/GB)
-//                            Log.i("", "init: dx="+dx+",dw="+dw+",xx="+xx);
-//                            if (dw.equals("MB") && dx > 1){
-//                                switchOffline.setChecked(true);
-//                                showTip("Your device has reached its memory limit. Please clear some space on your device before trying this operation again.\n");
-//                            }else{
-//                                //没超出
-//                                TransforData = false;
-//                                showLoadingDialog();
-//                                questionmodel(folderid, 0, page);//加载question模板
-//                            }
-//                        }
-//                    }
-//                });
             }
         });
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // TODO: add setContentView(...) invocation
+        ButterKnife.bind(this);
     }
 
     class MyReceiver extends BroadcastReceiver {
@@ -320,14 +311,14 @@ public class MainActivity extends BaseActivity<DatasetPresenter> implements IDat
                     //获取从Service中传来的data
                     TransforData = intent.getBooleanExtra(DatasetService.COUNTER, false);
                     //更新UI
-                    if (TransforData == true){
+                    if (TransforData == true) {
                         if (AppUtil.isNetworkAvailable(mContext)) {//有网络获取dataset
                             showLoadingDialog();
                             initdataset(mFolderidMap.get(level));
                         } else {//无网络获取本地dataset
                             locadataset(mFolderidMap.get(level));
                         }
-                    }else{
+                    } else {
                         stopService(mintent);
                         onRefresh();
                     }
@@ -340,7 +331,7 @@ public class MainActivity extends BaseActivity<DatasetPresenter> implements IDat
         @Override
         public void onReceive(Context context, final Intent intent) {
             if (AppUtil.isNetworkAvailable(MainActivity.this)) {
-                if (TransforData == true){
+                if (TransforData == true) {
                     //有网络打开Service服务获取dataset
                     startservice();
                 }
@@ -396,7 +387,7 @@ public class MainActivity extends BaseActivity<DatasetPresenter> implements IDat
     }
 
     private void startservice() {
-        if (AppUtil.isNetworkAvailable(MainActivity.this)){
+        if (AppUtil.isNetworkAvailable(MainActivity.this)) {
             showLoadingDialog();
             //有网络打开Service服务获取dataset
             mintent = new Intent(mContext, DatasetService.class);
@@ -451,18 +442,16 @@ public class MainActivity extends BaseActivity<DatasetPresenter> implements IDat
     //获取本地dataset数据
     private void locadataset(final int folderid) {
         if (mIsDirMap.get(level) == false) {
-            rlayoutBack.setVisibility(View.VISIBLE);
+            recordMenu.setVisibility(View.GONE);
             imgBack.setVisibility(View.VISIBLE);
             textTab.setText(mTitleMap.get(level));
         } else {
             if (level > 1) {
-                rlayoutBack.setVisibility(View.VISIBLE);
                 imgBack.setVisibility(View.VISIBLE);
-                imgAdd.setVisibility(View.GONE);
-                switchOffline.setVisibility(View.GONE);
             } else {
-                rlayoutBack.setVisibility(View.GONE);
+                imgBack.setVisibility(View.GONE);
             }
+            recordMenu.setVisibility(View.GONE);
             textTab.setText(mTitleMap.get(level));
             AutoRelativeLayoutFilled.setVisibility(View.GONE);
         }
@@ -504,13 +493,11 @@ public class MainActivity extends BaseActivity<DatasetPresenter> implements IDat
 
     //获取本地filled数据
     private void locafilled(final int datasetId) {
-        rlayoutBack.setVisibility(View.VISIBLE);
+        recordMenu.setVisibility(View.VISIBLE);
         imgBack.setVisibility(View.VISIBLE);
-        imgAdd.setVisibility(View.VISIBLE);
-        switchOffline.setVisibility(View.VISIBLE);
-        switchOffline.setClickable(false);
+//        imgAdd.setVisibility(View.VISIBLE);
         textTab.setText(mTitleMap.get(level));
-        AutoRelativeLayoutFilled.setVisibility(View.VISIBLE);
+        AutoRelativeLayoutFilled.setVisibility(View.GONE);
 
         db = myDatabaseHelper.getWritableDatabase();
         //取出record离线保存的问题列表
@@ -644,8 +631,8 @@ public class MainActivity extends BaseActivity<DatasetPresenter> implements IDat
     private void adapter() {
         db = myDatabaseHelper.getWritableDatabase();
         for (int i = 0; i < datasetList.size(); i++) {
-            if (datasetList.get(i).isFolder() == false){
-                if (datasetList.get(i).getDatasetPath() != null && datasetList.get(i).getDatasetPath() != ""){
+            if (datasetList.get(i).isFolder() == false) {
+                if (datasetList.get(i).getDatasetPath() != null && datasetList.get(i).getDatasetPath() != "") {
                     String[] selectpos = datasetList.get(i).getDatasetPath().split("[_]");
                     for (int j = 0; j < selectpos.length; j++) {
                         //判断数据库是否存过该record下的questionmodel
@@ -654,12 +641,12 @@ public class MainActivity extends BaseActivity<DatasetPresenter> implements IDat
                         if (cursor.getCount() > 0) {//说明已缓存过一个版本
                             datasetList.get(i).setOffline(true);
                             //判断缓存的是不是当前最新版本questionmodel，如果不是就获取最新版本  j < selectpos.length - 1 就不是最新版本
-                            if (j < selectpos.length - 1){
-                                Log.i("", "onResponse:selectpos "+selectpos[j]);
+                            if (j < selectpos.length - 1) {
+                                Log.i("", "onResponse:selectpos " + selectpos[j]);
 
                                 showLoadingDialog();
                                 //获取最新版本之前删除旧版本
-                                db.delete("questionmodelresult","DatasetID=?",new String[]{ selectpos[j] });
+                                db.delete("questionmodelresult", "DatasetID=?", new String[]{selectpos[j]});
                                 folderid = Integer.parseInt(selectpos[selectpos.length - 1]);
                                 questionmodel(folderid, 0, page);//加载question模板
 
@@ -679,7 +666,7 @@ public class MainActivity extends BaseActivity<DatasetPresenter> implements IDat
 //                                    questionmodel(folderid, 0, page);//加载question模板
 //                                }
                             }
-                        }else{
+                        } else {
                             datasetList.get(i).setOffline(false);
                         }
                         cursor.close();
@@ -689,16 +676,16 @@ public class MainActivity extends BaseActivity<DatasetPresenter> implements IDat
                     Cursor cursor1 = db.rawQuery(sql1, new String[]{String.valueOf(datasetList.get(i).getID())});
                     if (cursor1.getCount() > 0) {
                         datasetList.get(i).setOfflinequestion(true);
-                    }else{
+                    } else {
                         datasetList.get(i).setOfflinequestion(false);
                     }
                     cursor1.close();
-                }else{
+                } else {
                     String sql = "SELECT * FROM questionmodelresult where DatasetID = ?";
                     Cursor cursor = db.rawQuery(sql, new String[]{String.valueOf(datasetList.get(i).getID())});
                     if (cursor.getCount() > 0) {//说明已缓存
                         datasetList.get(i).setOffline(true);
-                    }else{
+                    } else {
                         datasetList.get(i).setOffline(false);
                     }
                     cursor.close();
@@ -707,7 +694,7 @@ public class MainActivity extends BaseActivity<DatasetPresenter> implements IDat
                     Cursor cursor1 = db.rawQuery(sql1, new String[]{String.valueOf(datasetList.get(i).getID())});
                     if (cursor1.getCount() > 0) {
                         datasetList.get(i).setOfflinequestion(true);
-                    }else{
+                    } else {
                         datasetList.get(i).setOfflinequestion(false);
                     }
                     cursor1.close();
@@ -719,8 +706,8 @@ public class MainActivity extends BaseActivity<DatasetPresenter> implements IDat
 
         } else {//无网络获取本地filled
             for (int i = 0; i < datasetList.size(); i++) {
-                if (datasetList.get(i).isFolder() == false){
-                    if (datasetList.get(i).isOffline() == false){
+                if (datasetList.get(i).isFolder() == false) {
+                    if (datasetList.get(i).isOffline() == false) {
                         datasetList.remove(i);
                         i--;
                     }
@@ -751,7 +738,7 @@ public class MainActivity extends BaseActivity<DatasetPresenter> implements IDat
             @Override
             public void onGlobalLayout() {
                 closeLoadingDialog();
-                if (TransforData == false){
+                if (TransforData == false) {
                     startservice();
                 }
                 recyclerviewItem.getViewTreeObserver().removeGlobalOnLayoutListener(this);
@@ -811,9 +798,9 @@ public class MainActivity extends BaseActivity<DatasetPresenter> implements IDat
                 String sql = "SELECT * FROM questionmodelresult where DatasetID = ?";
                 Cursor cursor = db.rawQuery(sql, new String[]{String.valueOf(folderid)});
                 if (cursor.getCount() > 0) {
-                    switchOffline.setChecked(false);
-                }else{
                     switchOffline.setChecked(true);
+                } else {
+                    switchOffline.setChecked(false);
                 }
                 cursor.close();
                 db.close();
@@ -931,12 +918,12 @@ public class MainActivity extends BaseActivity<DatasetPresenter> implements IDat
 
     private void addquestion() {
         String xx = Other.getAutoFileOrFilesSize("/data/data/com.example.vcserver.iqapture/databases/iqapture.db");//String 1.03(KB/MB/GB)
-        Double dx = Double.parseDouble(xx.substring(0,xx.length() - 2));//1.03
-        String dw = xx.substring(xx.length() - 2,xx.length());//(KB/MB/GB)
-        Log.i("", "init: dx="+dx+",dw="+dw+",xx="+xx);
-        if (dw.equals("MB") && dx > dbnum){
+        Double dx = Double.parseDouble(xx.substring(0, xx.length() - 2));//1.03
+        String dw = xx.substring(xx.length() - 2, xx.length());//(KB/MB/GB)
+        Log.i("", "init: dx=" + dx + ",dw=" + dw + ",xx=" + xx);
+        if (dw.equals("MB") && dx > dbnum) {
             showTip("Your device has reached its memory limit. Please clear some space on your device before trying this operation again.\n");
-        }else{
+        } else {
             //没超出
             //跳转问卷页面
             Intent intent = new Intent(MainActivity.this, QuestionnaireActivity.class);
@@ -983,7 +970,7 @@ public class MainActivity extends BaseActivity<DatasetPresenter> implements IDat
     }
 
 
-    @OnClick({R.id.img_menu, R.id.back, R.id.layout_exit, R.id.layout_setting, R.id.img_back, R.id.img_add})
+    @OnClick({R.id.img_menu, R.id.back, R.id.layout_exit, R.id.layout_setting, R.id.img_back,R.id.button_add})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             //左划菜单
@@ -1014,7 +1001,7 @@ public class MainActivity extends BaseActivity<DatasetPresenter> implements IDat
                     }
                 }
                 break;
-            case R.id.img_add:
+            case R.id.button_add:
                 addquestion();
                 break;
         }
@@ -1055,18 +1042,16 @@ public class MainActivity extends BaseActivity<DatasetPresenter> implements IDat
     @Override
     public void getDataset(DatasetResult result) {
         if (mIsDirMap.get(level) == false) {
-            rlayoutBack.setVisibility(View.VISIBLE);
             imgBack.setVisibility(View.VISIBLE);
             textTab.setText(mTitleMap.get(level));
         } else {
             if (level > 1) {
-                rlayoutBack.setVisibility(View.VISIBLE);
                 imgBack.setVisibility(View.VISIBLE);
-                imgAdd.setVisibility(View.GONE);
-                switchOffline.setVisibility(View.GONE);
             } else {
-                rlayoutBack.setVisibility(View.GONE);
+                imgBack.setVisibility(View.GONE);
             }
+            imgAdd.setVisibility(View.GONE);
+            recordMenu.setVisibility(View.GONE);
             textTab.setText(mTitleMap.get(level));
             AutoRelativeLayoutFilled.setVisibility(View.GONE);
         }
@@ -1092,13 +1077,11 @@ public class MainActivity extends BaseActivity<DatasetPresenter> implements IDat
     @Override
     public void getFilled(FilledResult result) {
         //正常加载record列表数据
-        rlayoutBack.setVisibility(View.VISIBLE);
+        recordMenu.setVisibility(View.VISIBLE);
         imgBack.setVisibility(View.VISIBLE);
-        imgAdd.setVisibility(View.VISIBLE);
-        switchOffline.setVisibility(View.VISIBLE);
-        switchOffline.setClickable(true);
+//        imgAdd.setVisibility(View.VISIBLE);
         textTab.setText(mTitleMap.get(level));
-        AutoRelativeLayoutFilled.setVisibility(View.VISIBLE);
+        AutoRelativeLayoutFilled.setVisibility(View.GONE);
         if (result.getRows() != null) {
             searchlayout.setVisibility(View.GONE);
             swipeRefreshLayout.setVisibility(View.VISIBLE);
@@ -1172,7 +1155,7 @@ public class MainActivity extends BaseActivity<DatasetPresenter> implements IDat
 
                     allquestionnaireList.clear();
                     questionnaireList.clear();
-                    if (TransforData == true){
+                    if (TransforData == true) {
                         if (mIsDirMap.get(level) == true) {
                             if (AppUtil.isNetworkAvailable(mContext)) {//有网络获取dataset
                                 showLoadingDialog();
@@ -1249,7 +1232,7 @@ public class MainActivity extends BaseActivity<DatasetPresenter> implements IDat
             @Override
             public void run() {
                 if (mIsDirMap.get(level) == true) {
-                    if (AppUtil.isNetworkAvailable(mContext)){
+                    if (AppUtil.isNetworkAvailable(mContext)) {
                         //刷新后打开Service服务获取dataset
                         startservice();
 
@@ -1280,22 +1263,16 @@ public class MainActivity extends BaseActivity<DatasetPresenter> implements IDat
                 mFolderidMap.put(level, folderid);
                 level = level - 1;
                 if (level > 1) {
-                    rlayoutBack.setVisibility(View.VISIBLE);
                     imgBack.setVisibility(View.VISIBLE);
                     imgAdd.setVisibility(View.GONE);
-                    switchOffline.setVisibility(View.GONE);
                     textTab.setText(mTitleMap.get(level));
                 } else {
-                    rlayoutBack.setVisibility(View.GONE);
+                    imgBack.setVisibility(View.GONE);
+                    imgAdd.setVisibility(View.GONE);
                     textTab.setText(mTitleMap.get(level));
                 }
                 onRefresh();
-//                if (AppUtil.isNetworkAvailable(mContext)) {//有网络获取dataset
-//                    showLoadingDialog();
-//                    initdataset(mFolderidMap.get(level));
-//                } else {//无网络获取本地dataset
-//                    locadataset(mFolderidMap.get(level));
-//                }
+
             } else {
                 appManager.AppExit();
                 unregisterReceiver(networkChangeReceiver);

@@ -2,13 +2,18 @@ package com.example.vcserver.iqapture.view.base;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.example.vcserver.iqapture.bean.dataset.DatasetResult;
@@ -87,6 +92,25 @@ public abstract class BaseActivity<P extends BasePresenter> extends RxAppCompatA
         init();
         appManager.addActivity(this);
 
+        ViewGroup decorViewGroup = (ViewGroup) getWindow().getDecorView();
+        View statusBarView = new View(getWindow().getContext());
+        int statusBarHeight = getStatusBarHeight(getWindow().getContext());
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, statusBarHeight);
+        params.gravity = Gravity.TOP;
+        statusBarView.setLayoutParams(params);
+        statusBarView.setBackgroundColor(Color.parseColor("#1B1B1B"));
+        decorViewGroup.addView(statusBarView);
+
+    }
+
+    private static int getStatusBarHeight(Context context) {
+        int statusBarHeight = 0;
+        Resources res = context.getResources();
+        int resourceId = res.getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            statusBarHeight = res.getDimensionPixelSize(resourceId);
+        }
+        return statusBarHeight;
     }
 
     protected abstract void initView();

@@ -8,5 +8,5 @@
     <!--描边-->
     <stroke
         android:width="2px"
-        android:color="@color/left"/>
+        android:color="@color/item_recycler"/>
 </shape>

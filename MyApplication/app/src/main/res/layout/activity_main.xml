@@ -14,69 +14,62 @@
         <com.zhy.autolayout.AutoRelativeLayout
             android:id="@+id/searchlayout"
             android:visibility="visible"
-            android:paddingRight="20px"
             android:layout_margin="24px"
-            android:background="@drawable/bg_seach"
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:layout_width="match_parent"
-            android:layout_height="96px">
+            android:layout_height="wrap_content">
             <ImageView
+                android:visibility="gone"
                 android:layout_marginLeft="24px"
                 android:layout_centerVertical="true"
                 android:id="@+id/image_seach"
                 android:src="@mipmap/seach"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_width="30px"
+                android:layout_height="30px"/>
             <EditText
-                android:layout_marginLeft="10px"
+                android:paddingTop="20px"
+                android:paddingBottom="20px"
+                android:paddingLeft="20px"
+                android:paddingRight="20px"
+                android:drawableLeft="@mipmap/seach"
                 android:layout_toRightOf="@+id/image_seach"
                 android:imeOptions="actionSearch"
                 android:singleLine="true"
                 android:layout_centerInParent="true"
                 android:id="@+id/edit_search"
                 android:layout_width="match_parent"
-                android:layout_height="90px"
-                android:background="@drawable/bg_seachs"
+                android:layout_height="96px"
+                android:background="@drawable/bg_search1"
                 android:gravity="center_vertical"
                 android:textSize="48px"/>
         </com.zhy.autolayout.AutoRelativeLayout>
         <com.zhy.autolayout.AutoRelativeLayout
             android:visibility="gone"
-            android:id="@+id/rlayout_back"
+            android:id="@+id/record_menu"
             android:layout_width="match_parent"
-            android:layout_height="146px">
-            <ImageView
-                android:visibility="visible"
-                android:layout_toRightOf="@+id/img_menu"
-                android:id="@+id/img_back"
+            android:layout_height="144px">
+            <Button
                 android:layout_centerVertical="true"
-                android:background="@mipmap/back"
-                android:layout_marginLeft="20px"
-                android:layout_width="80px"
-                android:layout_height="80px"/>
-            <ImageView
-                android:layout_marginLeft="50px"
-                android:layout_toRightOf="@+id/img_back"
-                android:background="@mipmap/add"
+                android:id="@+id/button_add"
+                android:textSize="36px"
+                android:textColor="@color/white"
+                android:text="+ ADD"
+                android:layout_marginLeft="24px"
+                android:background="@drawable/bg_seach1"
+                android:layout_width="150px"
+                android:layout_height="75px"/>
+            <TextView
+                android:text="offline："
                 android:layout_centerVertical="true"
-                android:visibility="gone"
-                android:id="@+id/img_add"
-                android:layout_width="80px"
-                android:layout_height="80px"/>
+                android:layout_toLeftOf="@+id/switch_offline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
             <Switch
-                android:checked="true"
-                android:visibility="gone"
-                android:showText="true"
-                android:textOn="OFF"
-                android:textOff="ON"
-                android:switchTextAppearance="@style/SwitchTheme"
-                android:thumb="@drawable/switch_rectangle_thumb_selector"
-                android:track="@drawable/switch_rectangle_track"
                 android:id="@+id/switch_offline"
+                android:layout_marginRight="24px"
                 android:layout_centerVertical="true"
                 android:layout_alignParentRight="true"
-                android:layout_marginRight="50px"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
         </com.zhy.autolayout.AutoRelativeLayout>

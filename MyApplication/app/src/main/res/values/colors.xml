@@ -25,4 +25,8 @@
     <color name="section5_text">#DFDFDF</color>
     <color name="section5_bk">#D7D7D7</color>
     <color name="layout_bg">#EEEEEE</color>
+
+    <color name="item_recycler">#5EA8F8</color>
+    <color name="item_recycler_font">#414141</color>
+    <color name="item_recycler_button">#4DD25B</color>
 </resources>

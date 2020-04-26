@@ -4,7 +4,7 @@
     android:layout_height="96px"
     android:paddingLeft="24px"
     android:paddingRight="24px"
-    android:background="@drawable/bg_seach2"
+    android:background="@drawable/bg_seach"
     android:layout_marginTop="10px">
     <TextView
         android:layout_toRightOf="@+id/checkbox"

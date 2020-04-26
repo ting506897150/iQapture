@@ -4,6 +4,7 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="android:dropDownListViewStyle">@style/mySpinnerStyle</item>
+        <!--<item name="android:windowTranslucentStatus">true</item>-->
     </style>
 
     <style name="mySpinnerStyle" parent="android:style/Widget.ListView.DropDown">
